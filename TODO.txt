@@ -1,0 +1,6 @@
+- Idea: Tener la posibilidad de definir un parametro para evitar el silencio del mp3 en un loop
+- TODO: TEST
+
+- Que pasa con el volumen si, estoy subiendo de 0 a 1 con fadeIn y en la mitad hago un stop?
+	Debería seguir subiendo hasta llegar al 1?
+	Debería hacer un resume con el volumen al max?
