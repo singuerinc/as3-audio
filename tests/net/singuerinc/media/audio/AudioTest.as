@@ -7,15 +7,12 @@ package net.singuerinc.media.audio {
 	 */
 	public class AudioTest {
 
-		[Embed(source='../../../../../bin/audio.mp3')]
-		public var mp3:Class;
-
 		public var audio:Audio;
 
 		[Before]
 		public function tearUp():void {
-			audio = new Audio("audioId", mp3);
-//			audio = new Audio("audioId", 'audio.mp3');
+//			audio = new Audio("audioId", mp3);
+			audio = new Audio("audioId", 'audio.mp3');
 		}
 
 		[Test]

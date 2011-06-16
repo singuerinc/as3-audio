@@ -13,9 +13,6 @@ package net.singuerinc.media.audio {
 	[SWF(backgroundColor="#242424", frameRate="60", width="640", height="480")]
 	public class AudioExample extends Sprite {
 
-		[Embed(source='../../../../../bin/audio.mp3')]
-		public var mp3:Class;
-
 		private var _audio:Audio;
 
 		public function AudioExample() {
@@ -30,7 +27,8 @@ package net.singuerinc.media.audio {
 			k1.maximum = 1;
 			k1.value = 1;
 
-			_audio = new Audio('id', mp3);
+//			_audio = new Audio('id', mp3);
+			_audio = new Audio('id', 'audio.mp3');
 			_audio.stateChanged.add(onAudioStateChanged);
 			_audio.volumeChanged.add(onAudioVolumeChanged);
 		}
