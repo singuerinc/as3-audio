@@ -12,12 +12,15 @@ package net.singuerinc.media.audio {
 	 */
 	public class AudioDeluxe extends Audio {
 
+		private var _positionInterval:uint;
+
 		public function AudioDeluxe(id:String, sound:*) {
 			super(id, sound);
 		}
 
 		override public function set volume(value:Number):void {
 			var vol:Number = Math.max(0, value);
+			_fadeCurrentVolume = value;
 			// TODO: Es posible optimizar esto?, sin tener que estar creando un nuevo soundTransform?
 			// channel.soundTransform.volume = vol;
 			channel.soundTransform = new SoundTransform(vol, pan);
@@ -37,6 +40,8 @@ package net.singuerinc.media.audio {
 		private var _delayedPlay:uint;
 
 		override public function pause():void {
+			//FIXME: estos dos clear tal vez hay que hacerlos solo si esta en isPlaying() == true ?????
+			clearTimeout(_positionInterval);
 			clearTimeout(_delayedPlay);
 			super.pause();
 		}
@@ -51,17 +56,40 @@ package net.singuerinc.media.audio {
 			super.play();
 		}
 
+		override public function resume():void {
+			super.resume();
+			if(isPlaying()){
+				_positionInterval = setInterval(onChangePosition, 100);
+			}
+		}
+
+		private function onChangePosition():void {
+			trace('audio position:', position, 'of:', length);
+		}
+
 		public function fade(from:Number = 0, to:Number = 1, time:uint = 1000):void {
-			volume = from;
+
+			volume = _fadeFromVolume = from;
+
 			_fadeTime = time;
-			_fadeFromVolume = from;
 			_fadeToVolume = to;
-			_fadeCurrentVolume = from;
+//			_fadeCurrentVolume = from;
 
 			clearInterval(_fadeInterval);
 			_fadeInterval = setInterval(updateFadeVolume, 100);
+			fadeStarted.dispatch(this);
 		}
 
+		public function get fadeStarted():AudioSignal {
+			return _fadeStarted ||= new AudioSignal();
+		}
+
+		public function get fadeCompleted():AudioSignal {
+			return _fadeCompleted ||= new AudioSignal();
+		}
+
+		private var _fadeStarted:AudioSignal;
+		private var _fadeCompleted:AudioSignal;
 		private var _fadeInterval:uint;
 		private var _fadeToVolume:Number;
 		private var _fadeCurrentVolume:Number;
@@ -78,6 +106,7 @@ package net.singuerinc.media.audio {
 			} else {
 				volume = _fadeCurrentVolume;
 				clearInterval(_fadeInterval);
+				fadeCompleted.dispatch(this);
 			}
 		}
 

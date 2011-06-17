@@ -33,9 +33,19 @@ package net.singuerinc.media.audio {
 
 //			_audio = new AudioDeluxe('id', mp3);
 			_audio = new AudioDeluxe('id', 'audio.mp3');
+			_audio.fadeStarted.add(onAudioFadeStarted);
+			_audio.fadeCompleted.add(onAudioFadeCompleted);
 			_audio.stateChanged.add(onAudioStateChanged);
 			_audio.volumeChanged.add(onAudioVolumeChanged);
 			_audio.completed.add(onAudioComplete);
+		}
+
+		private function onAudioFadeStarted(audio:Audio):void {
+			trace("[Audio] id =", audio.id, '- fade started.');
+		}
+
+		private function onAudioFadeCompleted(audio:Audio):void {
+			trace("[Audio] id =", audio.id, '- fade completed.');
 		}
 
 		private function onAudioComplete(audio:Audio):void {
@@ -53,7 +63,7 @@ package net.singuerinc.media.audio {
 		private function onPanChange(event:Event):void {
 			var value:Number = (event.currentTarget as Knob).value;
 			_audio.pan = value;
-			trace('pan:', _audio.pan);
+			trace("[Audio] id =", _audio.id, '- pab change to:', _audio.pan);
 		}
 
 		private function onVolumeChange(event:Event):void {
@@ -65,7 +75,7 @@ package net.singuerinc.media.audio {
 			switch(event.currentTarget.label) {
 				case 'play':
 					_audio.volume = .5;
-					_audio.delay = 1000;
+//					_audio.delay = 1000;
 					_audio.play();
 					_audio.fade(0, .3, 5000);
 					break;

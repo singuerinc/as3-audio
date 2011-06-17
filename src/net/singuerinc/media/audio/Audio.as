@@ -69,6 +69,7 @@ package net.singuerinc.media.audio {
 				_pausePosition = position;
 				_channel.stop();
 				_isPlaying = false;
+				_channel.removeEventListener(Event.SOUND_COMPLETE, _onSoundComplete);
 				if (_state != STOPPED) {
 					_state = PAUSED;
 					stateChanged.dispatch(this);
