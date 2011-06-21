@@ -47,7 +47,7 @@ package net.singuerinc.media.audio {
 
 		function get soundTransform():SoundTransform;
 
-		function set config(audioConfig:XML):void;
+		function parseConfig(value:XML):void;
 
 		function get config():XML;
 	}

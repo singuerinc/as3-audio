@@ -18,8 +18,8 @@ package net.singuerinc.media.audio {
 		[Test]
 		public function check_audio_init_values_after_constructor():void {
 
-			Assert.assertEquals(audio.delay, 0);
-			Assert.assertEquals(audio.pan, 0);
+			Assert.assertEquals(0, audio.delay);
+			Assert.assertEquals(0, audio.pan);
 			Assert.assertTrue(audio.fadeStarted is IAudioSignal);
 			Assert.assertTrue(audio.fadeCompleted is IAudioSignal);
 			Assert.assertTrue(audio.positionChanged is IAudioSignal);
@@ -27,49 +27,52 @@ package net.singuerinc.media.audio {
 
 		[Test]
 		public function check_after_fade_call():void {
-			Assert.assertEquals(audio.volume, 1);
-			audio.fade(0, 1, 1000);
-			Assert.assertEquals(audio.volume, 0);
+			Assert.assertEquals(1, audio.volume);
+			audio.fade(1000, 1, 0);
+			Assert.assertEquals(0, audio.volume);
 			Assert.assertTrue(audio.isPlaying());
 		}
 
 		[Test]
 		public function check_delay_after_set_delay():void {
-			Assert.assertEquals(audio.delay, 0);
+			Assert.assertEquals(0, audio.delay);
 			audio.delay = 1000;
-			Assert.assertEquals(audio.delay, 1000);
+			Assert.assertEquals(1000, audio.delay);
 		}
 		
 		[Test]
 		public function check_audio_volumeChanged_signal_when_set_volume():void {
 			
-			Assert.assertEquals(audio.volumeChanged.numListeners, 0);
+			Assert.assertEquals(0, audio.volumeChanged.numListeners);
 			audio.volumeChanged.add(_onSignal);
-			Assert.assertEquals(audio.volumeChanged.numListeners, 1);
+			Assert.assertEquals(1, audio.volumeChanged.numListeners);
 			audio.volume = 1;
 			audio.volumeChanged.remove(_onSignal);
-			Assert.assertEquals(audio.volumeChanged.numListeners, 0);
-			Assert.assertEquals(audio.volume, 1);
+			Assert.assertEquals(0, audio.volumeChanged.numListeners);
+			Assert.assertEquals(1, audio.volume);
 		}
 		
 		[Test]
 		public function check_audio_fadeStarted_signal_when_fade():void {
 			
-			Assert.assertEquals(audio.fadeStarted.numListeners, 0);
-//			Assert.assertEquals(audio.fadeCompleted.numListeners, 0);
-//			Assert.assertEquals(audio.positionChanged.numListeners, 0);
-			
+			Assert.assertEquals(0, audio.fadeStarted.numListeners);
 			audio.fadeStarted.addOnce(_onSignal);
-//			audio.fadeCompleted.addOnce(_onFadeCompleted);
-//			audio.positionChanged.addOnce(_onPositionChanged);
+			Assert.assertEquals(1, audio.fadeStarted.numListeners);
+			audio.fade(1000, 1, 0);
+			Assert.assertEquals(0, audio.fadeStarted.numListeners);
+		}
+		
+		[Test]
+		public function check_pan_after_set():void {
 			
-			Assert.assertEquals(audio.fadeStarted.numListeners, 1);
-//			Assert.assertEquals(audio.fadeCompleted.numListeners, 1);
-//			Assert.assertEquals(audio.positionChanged.numListeners, 1);
-			
-			audio.fade(0, 1, 1000);
-			
-			Assert.assertEquals(audio.fadeStarted.numListeners, 0);
+			Assert.assertEquals(0, audio.pan);
+			audio.pan = 1;
+			Assert.assertEquals(1, audio.pan);
+			audio.pan = 0;
+			Assert.assertEquals(0, audio.pan);
+			audio.pan = -1;
+			//There is a bug in Flash Player when set pan in soundTransform to -1, the return value is wrong
+			Assert.assertEquals(-0.9880999999999998, audio.pan);
 		}
 
 		private function _onSignal(audio:IAudioX):void {

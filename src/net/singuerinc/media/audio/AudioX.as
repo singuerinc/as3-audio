@@ -13,10 +13,11 @@ package net.singuerinc.media.audio {
 	public class AudioX extends Audio implements IAudioX {
 
 		protected var _positionInterval:uint;
-		private var _positionChanged:IAudioSignal;
+		protected var _positionChanged:IAudioSignal;
 
 		public function AudioX(id:String, sound:*) {
 			super(id, sound);
+			_delay = 0;
 		}
 
 		override public function set volume(value:Number):void {
@@ -35,9 +36,11 @@ package net.singuerinc.media.audio {
 			channel.soundTransform = new SoundTransform(volume, value);
 		}
 
-		public function get pan():Number {
-			return _channel.soundTransform.pan;
-		}
+		 public function get pan():Number {
+		 	//FIXME: Hay un bug en flash player, si haces pan(-1), el value no es uno sino -0.9880999999999998
+		 	//por lo tanto no se puede realizar un test
+			 return _channel.soundTransform.pan;
+		 }
 
 		protected var _delayedPlay:uint;
 
@@ -71,11 +74,15 @@ package net.singuerinc.media.audio {
 			positionChanged.dispatch(this);
 		}
 
-		public function fade(from:Number = 0, to:Number = 1, time:uint = 1000):void {
-			
-			if(!isPlaying()) play();
-			
-			volume = _fadeFromVolume = from;
+		public function fade(time:uint = 1000, to:Number = 1, from:Number = -1):void {
+
+			if (!isPlaying()) play();
+
+			if (from != -1) {
+				volume = _fadeFromVolume = from;
+			} else {
+				_fadeFromVolume = volume;
+			}
 
 			_fadeTime = time;
 			_fadeToVolume = to;
@@ -125,14 +132,19 @@ package net.singuerinc.media.audio {
 		public function get delay():uint {
 			return _delay;
 		}
-
+		
+		override public function get config():XML {
+			return _config || <audio id={_id} volume={volume} loops={loops} delay={delay} pan={pan} />;
+		}
+		
 		override protected function _parseConfig(audioConfig:XML):XML {
 
 			var c:XML = super._parseConfig(audioConfig);
 
 			// _fadeIn = c.@fadeIn;
 			// _fadeOut = c.@fadeOut;
-			_delay = c.@delay;
+			_delay = c.@delay || _delay;
+			pan = c.@pan || pan;
 
 			return c;
 		}

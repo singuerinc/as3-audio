@@ -6,5 +6,6 @@ package net.singuerinc.media.audio {
 
 		public var _AudioTest:AudioTest;
 		public var _AudioXTest:AudioXTest;
+		public var _AudioManagerTest:AudioManagerTest;
 	}
 }

@@ -41,14 +41,16 @@ package net.singuerinc.media.audio {
 			} else if (sound is URLRequest) {
 				_sound = new Sound(sound);
 			} else {
-				throw new Error('Parameter "sound" must be an instance of Sound or a Class that extends of Sound.');
+				throw new Error('Parameter "sound" must be an instance of Sound, a Class that extends of Sound or an url to mp3/wav.');
 			}
 
 			_id = id;
 			_channel = new SoundChannel();
 			_state = AudioState.STOPPED;
 
-			config = <sound id={_id} volume="1" loops="0" fadeIn="0" fadeOut="0" position="0" delay="0" />;
+			_volume = 1;
+			_loops = 0;
+			_pausePosition = 0;
 		}
 
 
@@ -183,14 +185,12 @@ package net.singuerinc.media.audio {
 
 
 
-
-
-		public function set config(audioConfig:XML):void {
-			_config = _parseConfig(audioConfig);
+		public function parseConfig(value:XML):void {
+			_config = _parseConfig(value);
 		}
 
 		public function get config():XML {
-			return _config;
+			return _config || <audio id={_id} volume={volume} loops={loops} />;
 		}
 
 		protected function _parseConfig(audioConfig:XML):XML {
@@ -198,14 +198,11 @@ package net.singuerinc.media.audio {
 			var c:XML = audioConfig;
 
 			// _id = c.@id;
-			volume = c.@volume;
-			loops = c.@loops;
-			_pausePosition = c.@position;
+			volume = c.@volume || volume;
+			_loops = c.@loops || loops;
+			_pausePosition = c.@position || _pausePosition;
 
 			return c;
 		}
-
-
-
 	}
 }

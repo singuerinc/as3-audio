@@ -1,0 +1,28 @@
+h2. as3-audio
+
+Audio Management for AS3 built on as3-signals.
+
+h3. Overview
+
+Audio provides an easy way to work with sounds on Actionscript 3.
+
+h3. Syntax
+
+<pre><code>
+var audio:IAudio = new Audio('id', 'path/to/sound.mp3');
+audio.volume = .5;
+audio.completed.add(onSoundComplete);
+audio.play();
+
+var audio:IAudioX = new AudioX('id', SoundClass);
+audio.play();
+audio.fade(1000, 1, 0); //time, to, from (optional)
+</code></pre>
+
+h3. Some Features
+
+* Unit tested.
+* Can be configured via XML.
+* No Events, as3-signals.
+* Interfaces.
+* Works with Robotlegs: http://www.robotlegs.org
