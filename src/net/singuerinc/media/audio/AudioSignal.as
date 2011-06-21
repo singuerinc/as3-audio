@@ -5,7 +5,7 @@ package net.singuerinc.media.audio {
 	/**
 	 * @author nahuel.scotti
 	 */
-	public class AudioSignal extends Signal {
+	public class AudioSignal extends Signal implements IAudioSignal{
 
 		public var audio:Audio;
 

@@ -9,11 +9,7 @@ package net.singuerinc.media.audio {
 	/**
 	 * @author nahuel.scotti
 	 */
-	public class Audio {
-
-		public static const STOPPED:int = -1;
-		public static const PAUSED:int = 0;
-		public static const PLAYING:int = 1;
+	public class Audio implements IAudio {
 
 		protected var _id:String;
 
@@ -25,7 +21,7 @@ package net.singuerinc.media.audio {
 
 		protected var _config:XML;
 
-		protected var _state:int;
+		protected var _state:AudioState;
 		protected var _isPlaying:Boolean;
 		protected var _pausePosition:Number;
 
@@ -50,7 +46,7 @@ package net.singuerinc.media.audio {
 
 			_id = id;
 			_channel = new SoundChannel();
-			_state = STOPPED;
+			_state = AudioState.STOPPED;
 
 			config = <sound id={_id} volume="1" loops="0" fadeIn="0" fadeOut="0" position="0" delay="0" />;
 		}
@@ -70,8 +66,8 @@ package net.singuerinc.media.audio {
 				_channel.stop();
 				_isPlaying = false;
 				_channel.removeEventListener(Event.SOUND_COMPLETE, _onSoundComplete);
-				if (_state != STOPPED) {
-					_state = PAUSED;
+				if (_state != AudioState.STOPPED) {
+					_state = AudioState.PAUSED;
 					stateChanged.dispatch(this);
 				}
 			}
@@ -83,7 +79,7 @@ package net.singuerinc.media.audio {
 				_channel = sound.play(_pausePosition, loops, soundTransform);
 				_channel.addEventListener(Event.SOUND_COMPLETE, _onSoundComplete);
 				_isPlaying = true;
-				_state = PLAYING;
+				_state = AudioState.PLAYING;
 				stateChanged.dispatch(this);
 			}
 		}
@@ -91,7 +87,7 @@ package net.singuerinc.media.audio {
 		public function stop():void {
 
 			if (isPlaying()) {
-				_state = STOPPED;
+				_state = AudioState.STOPPED;
 				pause();
 				_pausePosition = 0;
 				stateChanged.dispatch(this);
@@ -144,7 +140,7 @@ package net.singuerinc.media.audio {
 			return channel.position;
 		}
 
-		public function get state():int {
+		public function get state():AudioState {
 			return _state;
 		}
 

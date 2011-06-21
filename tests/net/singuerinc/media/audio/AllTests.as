@@ -5,5 +5,6 @@ package net.singuerinc.media.audio {
 	public class AllTests {
 
 		public var _AudioTest:AudioTest;
+		public var _AudioXTest:AudioXTest;
 	}
 }

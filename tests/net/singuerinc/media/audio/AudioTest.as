@@ -7,11 +7,11 @@ package net.singuerinc.media.audio {
 	 */
 	public class AudioTest {
 
-		public var audio:Audio;
+		public var audio:IAudio;
 
 		[Before]
 		public function tearUp():void {
-//			audio = new Audio("audioId", mp3);
+			// audio = new Audio("audioId", mp3);
 			audio = new Audio("audioId", 'audio.mp3');
 		}
 
@@ -25,7 +25,7 @@ package net.singuerinc.media.audio {
 			Assert.assertFalse(audio.isPlaying());
 			Assert.assertEquals(audio.loops, 0);
 			Assert.assertEquals(audio.position, 0);
-			Assert.assertEquals(audio.state, -1);
+			Assert.assertEquals(audio.state.state, AudioState.STOPPED.state);
 			Assert.assertNotNull(audio.channel);
 			Assert.assertNotNull(audio.soundTransform);
 		}
@@ -55,7 +55,7 @@ package net.singuerinc.media.audio {
 		[Test]
 		public function audio_state_is_PLAYING_after_play_call():void {
 			audio.play();
-			Assert.assertEquals(audio.state, Audio.PLAYING);
+			Assert.assertEquals(audio.state, AudioState.PLAYING);
 		}
 
 		[Test]
@@ -63,25 +63,26 @@ package net.singuerinc.media.audio {
 			audio.play();
 			audio.pause();
 			audio.resume();
-			Assert.assertEquals(audio.state, Audio.PLAYING);
+			Assert.assertEquals(audio.state.state, AudioState.PLAYING.state);
 		}
 
 		[Test]
 		public function audio_state_is_PAUSED_after_pause_call():void {
 			audio.play();
 			audio.pause();
-			Assert.assertEquals(audio.state, Audio.PAUSED);
+			Assert.assertEquals(audio.state.state, AudioState.PAUSED.state);
 		}
 
 		[Test]
 		public function audio_state_is_STOPPED_after_stop_call():void {
 			audio.play();
 			audio.stop();
-			Assert.assertEquals(audio.state, Audio.STOPPED);
+			Assert.assertEquals(audio.state.state, AudioState.STOPPED.state);
 		}
 
 		[After]
 		public function tearDown():void {
+			audio.stop();
 			audio = null;
 		}
 	}

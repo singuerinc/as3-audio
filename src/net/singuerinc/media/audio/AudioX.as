@@ -8,13 +8,14 @@ package net.singuerinc.media.audio {
 	import flash.utils.setTimeout;
 
 	/**
-	 * @author nahuel.scotti
+	 * @author nahuel.scotti / blog.singuerinc.net
 	 */
-	public class AudioDeluxe extends Audio {
+	public class AudioX extends Audio implements IAudioX {
 
-		private var _positionInterval:uint;
+		protected var _positionInterval:uint;
+		private var _positionChanged:IAudioSignal;
 
-		public function AudioDeluxe(id:String, sound:*) {
+		public function AudioX(id:String, sound:*) {
 			super(id, sound);
 		}
 
@@ -24,7 +25,8 @@ package net.singuerinc.media.audio {
 			// TODO: Es posible optimizar esto?, sin tener que estar creando un nuevo soundTransform?
 			// channel.soundTransform.volume = vol;
 			channel.soundTransform = new SoundTransform(vol, pan);
-			volumeChanged.dispatch(this);
+			if (volumeChanged.numListeners > 0)
+				volumeChanged.dispatch(this);
 		}
 
 		public function set pan(value:Number):void {
@@ -37,10 +39,10 @@ package net.singuerinc.media.audio {
 			return _channel.soundTransform.pan;
 		}
 
-		private var _delayedPlay:uint;
+		protected var _delayedPlay:uint;
 
 		override public function pause():void {
-			//FIXME: estos dos clear tal vez hay que hacerlos solo si esta en isPlaying() == true ?????
+			// FIXME: estos dos clear tal vez hay que hacerlos solo si esta en isPlaying() == true ?????
 			clearTimeout(_positionInterval);
 			clearTimeout(_delayedPlay);
 			super.pause();
@@ -48,7 +50,7 @@ package net.singuerinc.media.audio {
 
 		override public function play():void {
 
-			if (delay) {
+			if (delay && !isPlaying()) {
 				_delayedPlay = setTimeout(super.play, delay);
 				return;
 			}
@@ -58,45 +60,49 @@ package net.singuerinc.media.audio {
 
 		override public function resume():void {
 			super.resume();
-			if(isPlaying()){
-				_positionInterval = setInterval(onChangePosition, 100);
+			if (isPlaying()) {
+				if (positionChanged.numListeners > 0)
+					_positionInterval = setInterval(onChangePosition, 100);
 			}
 		}
 
-		private function onChangePosition():void {
+		protected function onChangePosition():void {
 			trace('audio position:', position, 'of:', length);
+			positionChanged.dispatch(this);
 		}
 
 		public function fade(from:Number = 0, to:Number = 1, time:uint = 1000):void {
-
+			
+			if(!isPlaying()) play();
+			
 			volume = _fadeFromVolume = from;
 
 			_fadeTime = time;
 			_fadeToVolume = to;
-//			_fadeCurrentVolume = from;
+			// _fadeCurrentVolume = from;
 
 			clearInterval(_fadeInterval);
 			_fadeInterval = setInterval(updateFadeVolume, 100);
 			fadeStarted.dispatch(this);
 		}
 
-		public function get fadeStarted():AudioSignal {
+		public function get fadeStarted():IAudioSignal {
 			return _fadeStarted ||= new AudioSignal();
 		}
 
-		public function get fadeCompleted():AudioSignal {
+		public function get fadeCompleted():IAudioSignal {
 			return _fadeCompleted ||= new AudioSignal();
 		}
 
-		private var _fadeStarted:AudioSignal;
-		private var _fadeCompleted:AudioSignal;
-		private var _fadeInterval:uint;
-		private var _fadeToVolume:Number;
-		private var _fadeCurrentVolume:Number;
-		private var _fadeTime:uint;
-		private var _fadeFromVolume:Number;
+		protected var _fadeStarted:IAudioSignal;
+		protected var _fadeCompleted:IAudioSignal;
+		protected var _fadeInterval:uint;
+		protected var _fadeToVolume:Number;
+		protected var _fadeCurrentVolume:Number;
+		protected var _fadeTime:uint;
+		protected var _fadeFromVolume:Number;
 
-		private function updateFadeVolume():void {
+		protected function updateFadeVolume():void {
 
 			if (!isPlaying()) return;
 
@@ -106,7 +112,7 @@ package net.singuerinc.media.audio {
 			} else {
 				volume = _fadeCurrentVolume;
 				clearInterval(_fadeInterval);
-				fadeCompleted.dispatch(this);
+				if (fadeCompleted.numListeners > 0) fadeCompleted.dispatch(this);
 			}
 		}
 
@@ -129,6 +135,10 @@ package net.singuerinc.media.audio {
 			_delay = c.@delay;
 
 			return c;
+		}
+
+		public function get positionChanged():IAudioSignal {
+			return _positionChanged ||= new AudioSignal();
 		}
 
 	}

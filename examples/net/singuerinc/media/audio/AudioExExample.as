@@ -11,11 +11,11 @@ package net.singuerinc.media.audio {
 	 */
 
 	[SWF(backgroundColor="#242424", frameRate="60", width="640", height="480")]
-	public class AudioDeluxeExample extends Sprite {
+	public class AudioExExample extends Sprite {
 
-		private var _audio:AudioDeluxe;
+		private var _audio:AudioX;
 
-		public function AudioDeluxeExample() {
+		public function AudioExExample() {
 
 			new PushButton(this, 20, 20, 'play', onClick);
 			new PushButton(this, 20, 45, 'pause', onClick);
@@ -32,7 +32,7 @@ package net.singuerinc.media.audio {
 			k2.value = 0;
 
 //			_audio = new AudioDeluxe('id', mp3);
-			_audio = new AudioDeluxe('id', 'audio.mp3');
+			_audio = new AudioX('id', 'audio.mp3');
 			_audio.fadeStarted.add(onAudioFadeStarted);
 			_audio.fadeCompleted.add(onAudioFadeCompleted);
 			_audio.stateChanged.add(onAudioStateChanged);
@@ -77,7 +77,7 @@ package net.singuerinc.media.audio {
 					_audio.volume = .5;
 //					_audio.delay = 1000;
 					_audio.play();
-					_audio.fade(0, .3, 5000);
+					_audio.fade(0, .3, 1000);
 					break;
 				case 'pause':
 					_audio.pause();

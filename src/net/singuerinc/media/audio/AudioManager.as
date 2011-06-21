@@ -10,8 +10,7 @@ package net.singuerinc.media.audio {
 		private var _audios:Dictionary = new Dictionary();
 		private var _volume:Number;
 
-		public function parseConfig(xml:XML):void{
-		
+		public function parseConfig(xml:XML):void {
 		}
 
 		public function add(audio:Audio):void {
