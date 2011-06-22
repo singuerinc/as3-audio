@@ -2,6 +2,7 @@ package net.singuerinc.media.audio {
 
 	import com.bit101.components.Knob;
 	import com.bit101.components.PushButton;
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -31,8 +32,8 @@ package net.singuerinc.media.audio {
 			k2.maximum = 1;
 			k2.value = 0;
 
-//			_audio = new AudioDeluxe('id', mp3);
-			_audio = new AudioX('id', 'audio1.mp3');
+			// _audio = new AudioDeluxe('id', mp3);
+			_audio = new AudioX('id', 'audio.mp3');
 			_audio.fadeStarted.add(onAudioFadeStarted);
 			_audio.fadeCompleted.add(onAudioFadeCompleted);
 			_audio.stateChanged.add(onAudioStateChanged);
@@ -53,7 +54,7 @@ package net.singuerinc.media.audio {
 		}
 
 		private function onAudioVolumeChanged(audio:Audio):void {
-//			trace("[Audio] id =", audio.id, '- changed volume to:', audio.volume);
+			trace("[Audio] id =", audio.id, '- changed volume to:', audio.volume);
 		}
 
 		private function onAudioStateChanged(audio:Audio):void {
@@ -75,13 +76,13 @@ package net.singuerinc.media.audio {
 			switch(event.currentTarget.label) {
 				case 'play':
 					_audio.volume = .5;
-//					_audio.delay = 1000;
+					// _audio.delay = 1000;
 					_audio.play();
 					_audio.fade(3000, 1, 0);
 					break;
 				case 'pause':
-					//_audio.pause();
-					_audio.fade(3000, 0, 1);
+					_audio.pause();
+//					_audio.fade(3000, 0, 1);
 					break;
 				case 'resume':
 					_audio.resume();

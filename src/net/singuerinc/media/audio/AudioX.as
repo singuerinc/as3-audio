@@ -2,6 +2,7 @@ package net.singuerinc.media.audio {
 
 
 	import org.osflash.signals.natives.NativeSignal;
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.media.SoundTransform;
@@ -87,17 +88,21 @@ package net.singuerinc.media.audio {
 
 			if (!isPlaying()) play();
 
-			_fadeFromVolume = (from == -1) ? _volume : from;
+			_fadeInitValue = (from == -1) ? _volume : from;
 
 			_fadeStartTime = getTimer();
 			_fadeElapsed = 0;
 			_fadeTotalTime = time;
-			_fadeToVolume = to;
+			_fadeFinalValue = to;
 			_fadeEase = ease || _defaultEase;
+
+			if (_fadeFinalValue < _fadeInitValue) {
+				_fadeFinalValue -= _fadeInitValue;
+			}
 
 			_enterFrame.remove(updateFadeVolume);
 			_enterFrame.add(updateFadeVolume);
-			
+
 			fadeStarted.dispatch(this);
 		}
 
@@ -115,8 +120,8 @@ package net.singuerinc.media.audio {
 		protected var _fadeElapsed:uint;
 		protected var _fadeTotalTime:uint;
 
-		protected var _fadeFromVolume:Number;
-		protected var _fadeToVolume:Number;
+		protected var _fadeInitValue:Number;
+		protected var _fadeFinalValue:Number;
 
 		protected var _fadeCurrentVolume:Number;
 
@@ -130,11 +135,10 @@ package net.singuerinc.media.audio {
 			_fadeElapsed = getTimer() - _fadeStartTime;
 
 			if (_fadeElapsed < _fadeTotalTime) {
-				// FIXME: Si _fadeToVolume == 0, la funcion no sirve
-				var vol:Number = _fadeEase(_fadeElapsed, _fadeFromVolume, _fadeToVolume, _fadeTotalTime);
+				var vol:Number = _fadeEase(_fadeElapsed, _fadeInitValue, _fadeFinalValue, _fadeTotalTime);
 				volume = vol;
 			} else {
-				volume = _fadeToVolume;
+				volume = _fadeFinalValue;
 				_enterFrame.remove(updateFadeVolume);
 				if (fadeCompleted.numListeners > 0) fadeCompleted.dispatch(this);
 			}
