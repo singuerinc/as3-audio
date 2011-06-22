@@ -25,9 +25,9 @@ package net.singuerinc.media.audio {
 		protected var _isPlaying:Boolean;
 		protected var _pausePosition:Number;
 
-		protected var _completed:AudioSignal;
-		protected var _stateChanged:AudioSignal;
-		protected var _volumeChanged:AudioSignal;
+		protected var _completed:IAudioSignal;
+		protected var _stateChanged:IAudioSignal;
+		protected var _volumeChanged:IAudioSignal;
 
 
 		public function Audio(id:String, sound:*) {
@@ -99,6 +99,7 @@ package net.singuerinc.media.audio {
 		public function set volume(value:Number):void {
 			var vol:Number = Math.max(0, value);
 			channel.soundTransform = new SoundTransform(vol);
+			_volume = channel.soundTransform.volume;
 			volumeChanged.dispatch(this);
 		}
 
@@ -118,15 +119,15 @@ package net.singuerinc.media.audio {
 			completed.dispatch(this);
 		}
 
-		public function get completed():AudioSignal {
+		public function get completed():IAudioSignal {
 			return _completed ||= new AudioSignal();
 		}
 
-		public function get stateChanged():AudioSignal {
+		public function get stateChanged():IAudioSignal {
 			return _stateChanged ||= new AudioSignal();
 		}
 
-		public function get volumeChanged():AudioSignal {
+		public function get volumeChanged():IAudioSignal {
 			return _volumeChanged ||= new AudioSignal();
 		}
 
@@ -203,6 +204,14 @@ package net.singuerinc.media.audio {
 			_pausePosition = c.@position || _pausePosition;
 
 			return c;
+		}
+
+		public function destroy():void {
+			stop();
+			_channel.removeEventListener(Event.SOUND_COMPLETE, _onSoundComplete);
+			completed.removeAll();
+			stateChanged.removeAll();
+			volumeChanged.removeAll();
 		}
 	}
 }

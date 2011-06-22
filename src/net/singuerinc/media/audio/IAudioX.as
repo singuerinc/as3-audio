@@ -13,7 +13,7 @@ package net.singuerinc.media.audio {
 		function get delay():uint;
 
 		// methods
-		function fade(time:uint = 1000, to:Number = 1, from:Number = -1):void;
+		function fade(time:uint = 1000, to:Number = 1, from:Number = -1, ease:Function=null):void;
 
 		// signals
 		function get fadeStarted():IAudioSignal;

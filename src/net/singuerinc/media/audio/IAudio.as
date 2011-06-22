@@ -21,11 +21,11 @@ package net.singuerinc.media.audio {
 
 		function get volume():Number;
 
-		function get completed():AudioSignal;
+		function get completed():IAudioSignal;
 
-		function get stateChanged():AudioSignal;
+		function get stateChanged():IAudioSignal;
 
-		function get volumeChanged():AudioSignal;
+		function get volumeChanged():IAudioSignal;
 
 		function get length():Number;
 
@@ -50,5 +50,7 @@ package net.singuerinc.media.audio {
 		function parseConfig(value:XML):void;
 
 		function get config():XML;
+
+		function destroy():void;
 	}
 }
