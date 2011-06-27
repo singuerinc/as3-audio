@@ -8,7 +8,7 @@ package net.singuerinc.media.audio.manager {
 	public class AudioManagerSignal extends Signal implements IAudioManagerSignal {
 
 		public function AudioManagerSignal() {
-			super(Number);
+			super(AudioManager);
 		}
 	}
 }

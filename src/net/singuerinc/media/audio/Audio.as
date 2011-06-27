@@ -64,6 +64,7 @@ package net.singuerinc.media.audio {
 
 		public function pause():void {
 			if (isPlaying()) {
+				trace('[AUDIO] @id=', id, 'pause/stop.');
 				_pausePosition = position;
 				_channel.stop();
 				_isPlaying = false;
@@ -78,6 +79,7 @@ package net.singuerinc.media.audio {
 		public function resume():void {
 
 			if (!isPlaying()) {
+				trace('[AUDIO] @id=', id, 'play/resume.');
 				_channel = sound.play(_pausePosition, loops, soundTransform);
 				_channel.addEventListener(Event.SOUND_COMPLETE, _onSoundComplete);
 				_isPlaying = true;

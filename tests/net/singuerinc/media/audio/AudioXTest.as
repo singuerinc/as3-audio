@@ -18,7 +18,6 @@ package net.singuerinc.media.audio {
 		[Test]
 		public function check_audio_init_values_after_constructor():void {
 
-			Assert.assertEquals(0, audio.delay);
 			Assert.assertEquals(0, audio.pan);
 			Assert.assertTrue(audio.fadeStarted is IAudioSignal);
 			Assert.assertTrue(audio.fadeCompleted is IAudioSignal);
@@ -32,13 +31,6 @@ package net.singuerinc.media.audio {
 			// FIXME: Realizar un test async
 			Assert.assertEquals(1, audio.volume);
 			Assert.assertTrue(audio.isPlaying());
-		}
-
-		[Test]
-		public function check_delay_after_set_delay():void {
-			Assert.assertEquals(0, audio.delay);
-			audio.delay = 1000;
-			Assert.assertEquals(1000, audio.delay);
 		}
 
 		[Test]

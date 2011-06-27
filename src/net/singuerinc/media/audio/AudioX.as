@@ -27,7 +27,6 @@ package net.singuerinc.media.audio {
 
 		public function AudioX(id:String, sound:*) {
 			super(id, sound);
-			_delay = 0;
 			_enterFrame = new NativeSignal(_s, Event.ENTER_FRAME, Event);
 		}
 
@@ -61,16 +60,6 @@ package net.singuerinc.media.audio {
 			super.pause();
 		}
 
-		override public function play():void {
-
-			if (delay && !isPlaying()) {
-				_delayedPlay = setTimeout(super.play, delay);
-				return;
-			}
-
-			super.play();
-		}
-
 		override public function resume():void {
 			super.resume();
 			if (isPlaying()) {
@@ -84,7 +73,7 @@ package net.singuerinc.media.audio {
 			positionChanged.dispatch(this);
 		}
 
-		public function fade(time:uint = 1000, to:Number = 1, from:Number = -1, ease:Function = null):void {
+		public function fade(time:uint = 1000, to:Number = 1, from:Number = -1):void {
 
 			if (!isPlaying()) play();
 
@@ -94,7 +83,6 @@ package net.singuerinc.media.audio {
 			_fadeElapsed = 0;
 			_fadeTotalTime = time;
 			_fadeFinalValue = to;
-			_fadeEase = ease || _defaultEase;
 
 			if (_fadeFinalValue < _fadeInitValue) {
 				_fadeFinalValue -= _fadeInitValue;
@@ -113,8 +101,6 @@ package net.singuerinc.media.audio {
 		public function get fadeCompleted():IAudioSignal {
 			return _fadeCompleted ||= new AudioSignal();
 		}
-
-		protected var _fadeEase:Function;
 
 		protected var _fadeStartTime:int;
 		protected var _fadeElapsed:uint;
@@ -135,39 +121,13 @@ package net.singuerinc.media.audio {
 			_fadeElapsed = getTimer() - _fadeStartTime;
 
 			if (_fadeElapsed < _fadeTotalTime) {
-				var vol:Number = _fadeEase(_fadeElapsed, _fadeInitValue, _fadeFinalValue, _fadeTotalTime);
+				var vol:Number = _defaultEase(_fadeElapsed, _fadeInitValue, _fadeFinalValue, _fadeTotalTime);
 				volume = vol;
 			} else {
 				volume = _fadeFinalValue;
 				_enterFrame.remove(updateFadeVolume);
 				if (fadeCompleted.numListeners > 0) fadeCompleted.dispatch(this);
 			}
-		}
-
-		protected var _delay:uint;
-
-		public function set delay(value:uint):void {
-			_delay = value;
-		}
-
-		public function get delay():uint {
-			return _delay;
-		}
-
-		override public function get config():XML {
-			return _config || <audio id={_id} volume={volume} loops={loops} delay={delay} pan={pan} />;
-		}
-
-		override protected function _parseConfig(audioConfig:XML):XML {
-
-			var c:XML = super._parseConfig(audioConfig);
-
-			// _fadeIn = c.@fadeIn;
-			// _fadeOut = c.@fadeOut;
-			_delay = c.@delay || _delay;
-			pan = c.@pan || pan;
-
-			return c;
 		}
 
 		public function get positionChanged():IAudioSignal {
@@ -182,6 +142,12 @@ package net.singuerinc.media.audio {
 
 			super.destroy();
 
+		}
+
+		public function playWithDelay(delay:uint):void {
+			if (!isPlaying()) {
+				_delayedPlay = setTimeout(super.play, delay);
+			}
 		}
 	}
 }

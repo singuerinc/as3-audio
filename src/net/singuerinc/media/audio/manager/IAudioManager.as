@@ -6,10 +6,10 @@ package net.singuerinc.media.audio.manager {
 	 * @author nahuel.scotti / blog.singuerinc.net
 	 */
 	public interface IAudioManager {
-		
+
 		function get id():String;
-		
-		function add(audio:IAudio):uint;
+
+		function add(audio:IAudio):IAudio;
 
 		function hasWithId(audioId:String):Boolean;
 
@@ -32,7 +32,21 @@ package net.singuerinc.media.audio.manager {
 		function destroy():void;
 
 
+		//
+		function play(audioId:String):void;
+
+		function pause(audioId:String):void;
+
+		function resume(audioId:String):void;
+
+		function stop(audioId:String):void;
+
+		function playAll():void;
+		function pauseAll():void;
+		function resumeAll():void;
+		function stopAll():void;
+
 		// signals
-		function get onVolumeChange():IAudioManagerSignal;
+		function get volumeChanged():IAudioManagerSignal;
 	}
 }
