@@ -1,6 +1,8 @@
 package net.singuerinc.media.audio {
 
 	import org.flexunit.Assert;
+	import org.osflash.signals.utils.SignalAsyncEvent;
+	import org.osflash.signals.utils.handleSignal;
 
 	/**
 	 * @author nahuel.scotti
@@ -31,6 +33,18 @@ package net.singuerinc.media.audio {
 			// FIXME: Realizar un test async
 			Assert.assertEquals(1, audio.volume);
 			Assert.assertTrue(audio.isPlaying());
+		}
+
+		[Test(async)]
+		public function check_after_playWidthDelay_call():void {
+			handleSignal(this, audio.stateChanged, verify_state, 100, {audio: audio});
+			audio.playWithDelay(100);
+			Assert.assertFalse(audio.isPlaying());
+		}
+
+		private function verify_state(event:SignalAsyncEvent, data:Object):void {
+			var a:IAudioX = data.audio;
+			Assert.assertTrue(a.isPlaying());
 		}
 
 		[Test]
